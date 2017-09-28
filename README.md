@@ -1,3 +1,3 @@
-#Tp_Grafos
+# Tp_Grafos
 
-Trabalho prático de PAA, para calcular ordem de influência em um grafo.
+Trabalho prÃ¡tico de PAA, para calcular ordem de influÃªncia em um grafo.
