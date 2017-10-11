@@ -15,9 +15,10 @@ typedef Graph* pGraph;
 //Node
 struct Node {
     int id;
+    bool connected;
     std::list<pEdge> adj;
 
-    Node(int _id): id(_id) {};
+    Node(int _id): id(_id), connected(false) {};
     void addAdj(pEdge e);
 };
 

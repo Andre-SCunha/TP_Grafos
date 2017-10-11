@@ -7,6 +7,7 @@
 void Node::addAdj(pEdge e){
 
     adj.push_back(e);
+    connected = true;
 
 }
 

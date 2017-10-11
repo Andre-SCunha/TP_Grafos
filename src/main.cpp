@@ -55,22 +55,24 @@ int main(){
         inf[i].influence = 0;
     }
     for (int i = 0; i < myGraph.n; i++){
-        simDij(myGraph, i, inf);
+        if(myGraph.V[i]->connected)
+            simDij(myGraph, i, inf);
     }
     sort(inf.begin(), inf.end(), Pair::compare);
     for (auto i: inf)
-        cout << i.id << ',';
-    cout << "\b\n" << endl;
+        if(myGraph.V[i.id]->connected)
+            cout << i.id << ':' << i.influence << ",";
+    cout << endl;
 
 //Printing Graph
-/*    cout << myGraph.n << " " << myGraph.m << endl;
+    cout << myGraph.n << " " << myGraph.m << endl;
     for (int i=0; i<myGraph.n; i++){
         cout << myGraph.V[i]->id;
         for (pEdge e : myGraph.V[i]->adj){
             cout << endl << "\t" << e->w << "," << e->u->id << "," << e->v->id;
         }
         cout << endl;
-    }*/
+    }
 
     return 0;
 }
@@ -116,12 +118,16 @@ void simDij(Graph& G, int source, vector<Pair> &inf){
 
 //Printing Solution
     for (int i = 0; i < G.n; i++){
-        int j = i;
-        while (j != source){
-            inf[j].influence++;//cout << j << " ";
-            j = prev[j];
+        if(G.V[i]->connected){
+            int j = i;
+            while (j != source){
+                inf[j].influence++;//
+                //cout << j << " ";
+                j = prev[j];
+            }
+            inf[source].influence++;//
+            //cout << source << endl;
         }
-        inf[source].influence++;//cout << source << endl;
     }
 
 }
