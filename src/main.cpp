@@ -43,7 +43,7 @@ int main(){
     Graph myGraph(max+1);
 
     for (int i = 0; i < m; i++){
-        myGraph.addEdge(v.front(), u.front(), w.front()/100);
+        myGraph.addEdge(v.front(), u.front(), 100-w.front());
         v.pop_front(); u.pop_front(); w.pop_front();
     }
 
@@ -85,19 +85,19 @@ void simDij(Graph& G, int source, vector<Pair> &inf){
     float aux;
 
     for (int i = 0; i < G.n; i++){
-        dist[i] = -1;
+        dist[i] = 100000;
         prev[i] = -1;
         Q.insert(Q.end(), i);
     }
 
-    dist[source] = 1;
+    dist[source] = 0;
 
 //Modified Dijkstra
     while(!Q.empty()){
     //Finding max dist element
         max = *Q.begin();
         for (set<int>::iterator it=Q.begin(); it!=Q.end(); ++it){
-            if(dist[*it] > dist[max])
+            if(dist[*it] < dist[max])
                 max = *it;
         }
     //Removing from the "not reached yet"
@@ -107,8 +107,8 @@ void simDij(Graph& G, int source, vector<Pair> &inf){
             v = (e->u->id == max)?e->v->id:e->u->id;
         //If element still in Q
             if(Q.find(v) != Q.end()){
-                aux = dist[max] * e->w;
-                if(aux > dist[v]){
+                aux = dist[max] + e->w;
+                if(aux < dist[v]){
                     dist[v] = aux;
                     prev[v] = max;
                 }
@@ -122,11 +122,11 @@ void simDij(Graph& G, int source, vector<Pair> &inf){
             int j = i;
             while (j != source){
                 inf[j].influence++;//
-                //cout << j << " ";
+                cout << j << " ";
                 j = prev[j];
             }
             inf[source].influence++;//
-            //cout << source << endl;
+            cout << source << endl;
         }
     }
 
