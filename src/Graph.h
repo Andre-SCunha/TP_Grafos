@@ -38,5 +38,6 @@ struct Graph {
 
     Graph(int _n);
     void addEdge(int _u, int _v, float _w);
+    void print();
 };
 #endif //GRAPH_H
