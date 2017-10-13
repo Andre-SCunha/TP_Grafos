@@ -4,6 +4,8 @@
 #include <vector>
 #include "Graph.h"
 
+using namespace std;
+
 struct NodeInfluence;
 struct DistVertex;
 struct VertexComp;
@@ -15,10 +17,7 @@ struct NodeInfluence{
     int id;
     int influence;
 
-    static bool compare (NodeInfluence a, NodeInfluence b){
-        if(a.influence==b.influence)
-            return a.id<b.id;
-        return a.influence>b.influence;};
+    static bool compare (NodeInfluence a, NodeInfluence b);
 };
 
 //Dijkstra Vertex
@@ -39,7 +38,7 @@ struct Similarity{
 
     Similarity (int _n);
     void SimPathsComp(Graph& G);
-    void SortAndPrint();
+    void SortAndPrint(Graph myGraph);
 
     private:
         void SimDijikstra(Graph& G, int source);

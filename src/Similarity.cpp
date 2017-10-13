@@ -3,6 +3,17 @@
 #include <iostream>
 #include <algorithm>
 
+using namespace std;
+
+//Influence
+bool NodeInfluence::compare (NodeInfluence a, NodeInfluence b){
+
+    if(a.influence==b.influence)
+        return a.id<b.id;
+    return a.influence>b.influence;
+
+}
+
 //Vertex Comparison
 bool VertexComp::operator() (pDistVertex a, pDistVertex b){
 
@@ -29,7 +40,7 @@ void Similarity::SimPathsComp(Graph& G){
 
 }
 
-void SimDijikstra(Graph& G, int source){
+void Similarity::SimDijikstra(Graph& G, int source){
 
 //Check if node has edges
     if(!G.V[source]->connected)
@@ -43,27 +54,24 @@ void SimDijikstra(Graph& G, int source){
     float aux =  std::numeric_limits<float>::infinity();
 
     for (int i = 0; i < G.n; i++){
-        if (i!=source){
-            nodes[i].id = i;
-            nodes[i].dist = aux;
-            nodes[i].prev = -1;
-        } else{
-            nodes[i].id = i;
-            nodes[i].dist = 0;
-            nodes[i].prev = -1;
-        }
+        nodes[i].id = i;
+        nodes[i].dist = (i!=source)?aux:0;
+        nodes[i].prev = -1;
         distanceQ.insert(distanceQ.end(), &nodes[i]);
     }
 
 //Dijkstra
     while(!distanceQ.empty()){
+    
     //Finding min dist element
         first = *distanceQ.begin();
         dest_id = first->id;
         dest_dist = first->dist;
+        
     //Removing from the "not reached yet"
         distanceQ.erase(distanceQ.begin());
-    //Updating neighbours best similarity
+        
+    //Updating neighbours best similarity path
         for (pEdge e : G.V[dest_id]->adj){
         //Getting neighbour id
             v = (e->u->id == dest_id)?e->v->id:e->u->id;
@@ -71,7 +79,7 @@ void SimDijikstra(Graph& G, int source){
             set<pDistVertex, VertexComp>::iterator nei = distanceQ.find(&nodes[v]);
             if(nei != distanceQ.end()){
                 aux = dest_dist + e->w;
-            //Updating distanceQ and node.dist
+            //Updating distanceQ and node distance
                 if(aux < nodes[v].dist){
                 //Removing from set
                     distanceQ.erase(nei);
@@ -85,7 +93,7 @@ void SimDijikstra(Graph& G, int source){
         }
     }
 
-//Paths computation
+//Nodes influence computation
     for (int i = 0; i < G.n; i++){
         if(G.V[i]->connected){
             int j = i;
@@ -100,15 +108,15 @@ void SimDijikstra(Graph& G, int source){
 }
 
 
-void Similarity::SortAndPrint(){
+void Similarity::SortAndPrint(Graph myGraph){
 
     sort(inf.begin(), inf.end(), NodeInfluence::compare);
     int j = 0;
-    while(!myGraph.V[j.id]->connected)
+    while(!myGraph.V[inf[j].id]->connected)
         j++;
-    cout << inf[i].id;
-    for (int i = j; i < n; i ++)
-        if(myGraph.V[i.id]->connected)
+    cout << inf[j].id;
+    for (int i = j+1; i < n; i ++)
+        if(myGraph.V[inf[i].id]->connected)
             cout << ","<< inf[i].id;
     cout << endl;
 
