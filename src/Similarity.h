@@ -2,6 +2,7 @@
 #define SIMILARITY_H
 
 #include <vector>
+#include <list>
 #include "Graph.h"
 
 using namespace std;
@@ -22,7 +23,7 @@ struct NodeInfluence{
 
 //Dijkstra Vertex
 struct DistVertex{
-    int id, prev;
+    int id, prev, num_sons, num_paths;
     float dist;
 };
 

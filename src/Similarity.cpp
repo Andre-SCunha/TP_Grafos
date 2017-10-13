@@ -42,11 +42,11 @@ void Similarity::SimPathsComp(Graph& G){
 
 void Similarity::SimDijikstra(Graph& G, int source){
 
-//Check if node has edges
+    //Check if node has edges
     if(!G.V[source]->connected)
         return;
         
-//Structures
+    //Structures
     set<pDistVertex, VertexComp> distanceQ;
     vector<DistVertex> nodes(G.n);
     pDistVertex first;
@@ -57,52 +57,67 @@ void Similarity::SimDijikstra(Graph& G, int source){
         nodes[i].id = i;
         nodes[i].dist = (i!=source)?aux:0;
         nodes[i].prev = -1;
+        nodes[i].num_sons = 0;
+        nodes[i].num_paths = 1;
         distanceQ.insert(distanceQ.end(), &nodes[i]);
     }
 
-//Dijkstra
+    //Dijkstra
     while(!distanceQ.empty()){
     
-    //Finding min dist element
+        //Finding min dist element
         first = *distanceQ.begin();
         dest_id = first->id;
         dest_dist = first->dist;
-        
-    //Removing from the "not reached yet"
+
+        //Removing from the "not reached yet"
         distanceQ.erase(distanceQ.begin());
-        
-    //Updating neighbours best similarity path
+
+        //Updating min_tree
+        if(dest_id!=source)
+            nodes[nodes[dest_id].prev].num_sons ++;
+
+        //Updating neighbours best similarity path
         for (pEdge e : G.V[dest_id]->adj){
-        //Getting neighbour id
+            //Getting neighbour id
             v = (e->u->id == dest_id)?e->v->id:e->u->id;
-        //If element still in Q
+            //If element still in Q
             set<pDistVertex, VertexComp>::iterator nei = distanceQ.find(&nodes[v]);
             if(nei != distanceQ.end()){
                 aux = dest_dist + e->w;
-            //Updating distanceQ and node distance
+                //Updating distanceQ and node distance
                 if(aux < nodes[v].dist){
-                //Removing from set
+                    //Removing from set
                     distanceQ.erase(nei);
-                //Updating values
+                    //Updating values
                     nodes[v].dist = aux;
                     nodes[v].prev = dest_id;
-                //Re-Inserting on set
+                    //Re-Inserting on set
                     distanceQ.insert(&nodes[v]);
                 }
             }
         }
     }
 
-//Nodes influence computation
-    for (int i = 0; i < G.n; i++){
-        if(G.V[i]->connected){
-            int j = i;
-            while (j != source){
-                inf[j].influence++;
-                j = nodes[j].prev;
-            }
-            inf[source].influence++;
+    //Nodes influence computation
+    list<int> queue;
+
+    //Queueing leaf nodes
+    for (int i = 0; i < G.n; i++)
+        if(G.V[i]->connected && nodes[i].num_sons == 0)
+            queue.push_back(i);
+
+    //Paths computation
+    while (!queue.empty()){
+        int n = queue.front();
+        if(n != source){
+            nodes[nodes[n].prev].num_paths += nodes[n].num_paths;
+            nodes[nodes[n].prev].num_sons --;
+            if(nodes[nodes[n].prev].num_sons == 0)
+                queue.push_back(nodes[n].prev);
         }
+        inf[n].influence += nodes[n].num_paths;
+        queue.pop_front();
     }
 
 }
